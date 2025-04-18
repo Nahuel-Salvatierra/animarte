@@ -1,6 +1,7 @@
 import { GoogleDriveService } from "@/external/google/GoogleDriveService";
 import { AxiosError } from "axios";
 import { FetchedBook } from "../actions/fetchDriveBooks";
+import { NextResponse } from "next/server";
 
 export type ApiResponse = {
   books: FetchedBook[];
@@ -19,7 +20,10 @@ export async function GET(request: Request) {
     console.log("calling pi");
 
     const driveService = new GoogleDriveService();
-    return await driveService.downloadFile(id);
+    const response = await driveService.downloadFile(id);
+    console.log("route google", response);
+
+    return NextResponse.json(response);
   } catch (error) {
     console.log("Error fetching files:", error);
     throw new AxiosError("Error fetching files from Google");

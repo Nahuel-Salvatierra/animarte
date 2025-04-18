@@ -14,7 +14,7 @@ export default function DownloadButton({
 
   const handleClick = () => {
     const element = document.querySelector("#catalog-pdf");
-    html2pdf(element);
+    if (element) html2pdf(element);
     onDownload?.();
   };
 

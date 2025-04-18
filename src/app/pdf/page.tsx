@@ -3,8 +3,13 @@
 import { useCartStore } from "@/store/useCartStore";
 import { useMemo } from "react";
 import CatalogPDF from "./components/CatalogPDF";
-import DownloadButton from "./components/DownloadButton";
 import { useRouter } from "next/navigation";
+
+import dynamic from "next/dynamic";
+
+const DownloadButton = dynamic(() => import("./components/DownloadButton"), {
+  ssr: false,
+});
 
 export default function Page() {
   const cartItemsRaw = useCartStore((state) => state.cartItems);
