@@ -1,4 +1,4 @@
-import { ChevronDownSquareIcon, ChevronUpSquareIcon } from "lucide-react";
+import { MinusIcon, PlusIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 
@@ -39,41 +39,43 @@ export default function Cart() {
       <SheetHeader>
         <SheetTitle>Solicitud de pedido</SheetTitle>
         <SheetDescription>
-          El peidido se enviara a travez de WhatsApp en formato PDF.
+          El peidido se descargara en formato PDF.
         </SheetDescription>
       </SheetHeader>
-      <SheetFooter className="overflow-y-auto">
+      <SheetDescription className="overflow-y-auto p-2 gap-2 flex flex-row flex-wrap">
         {cartItemsIterable.map((item) => (
-          <Card key={item.id}>
+          <Card className="w-full" key={item.id}>
             <CardContent>
               <div
                 key={item.id}
-                className="flex justify-between items-center py-2"
+                className="flex flex-col justify-between items-center py-2"
               >
                 <div className="flex justify-start items-center">
                   <SafeImage
                     alt={item.reference.name || ""}
                     src={item.reference.images[0]}
-                    width={50}
-                    height={50}
+                    width={75}
+                    height={75}
                   />
-                  <p className=" truncate text-start">{item.reference?.name}</p>
+                  <div className="text-center overflow-hidden text-ellipsis max-h-20">
+                    {item.reference?.name}
+                  </div>
                 </div>
-                <div className="flex flex-col items-center">
-                  <ChevronUpSquareIcon
+                <div className="flex pt-2 w-full justify-around items-center">
+                  <MinusIcon
                     className=""
-                    onClick={() => handleAmountChange(+1, item)}
-                  ></ChevronUpSquareIcon>
-                  <p className="py-1 ">{item.amount}</p>
-                  <ChevronDownSquareIcon
                     onClick={() => handleAmountChange(-1, item)}
-                  ></ChevronDownSquareIcon>
+                  ></MinusIcon>
+                  <p className="py-1 ">{item.amount}</p>
+                  <PlusIcon
+                    onClick={() => handleAmountChange(+1, item)}
+                  ></PlusIcon>
                 </div>
               </div>
             </CardContent>
           </Card>
         ))}
-      </SheetFooter>
+      </SheetDescription>
       <SheetFooter>
         <SheetClose asChild>
           <Button type="button" onClick={() => router.push("/pdf")}>
