@@ -1,8 +1,7 @@
 "use client";
 
 import BookCard from "./BookCard";
-import { useEffect, useRef, useState } from "react";
-import { useBook } from "@/hooks/useBook";
+import { useEffect, useRef } from "react";
 import { Book } from "./DriveBookStore";
 import Spinner from "./Spinner";
 
@@ -19,7 +18,6 @@ export default function BookCatalog({
   isLoading,
   hasMore,
   loadMore,
-  onRetry,
 }: Props) {
   const sentinelRef = useRef<HTMLDivElement>(null);
 
