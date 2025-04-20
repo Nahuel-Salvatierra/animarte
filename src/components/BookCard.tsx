@@ -67,11 +67,11 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
         >
           {isInCartAmount ? "Eliminar" : "Seleccionar"}
         </Button>
-        <div className="flex">
+        <div className="flex px-2 items-center">
           <div className="mouse-pointer" onClick={() => handleAmountChange(-1)}>
             <MinusIcon />
           </div>
-          <CardFooter>{cartItems.amount || 0}</CardFooter>
+          <CardFooter className="px-4">{cartItems.amount || 0}</CardFooter>
           <div className="mouse-pointer" onClick={() => handleAmountChange(+1)}>
             <PlusIcon />
           </div>
