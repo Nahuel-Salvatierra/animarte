@@ -33,21 +33,26 @@ export default function DriveBookStore() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadBooks = async () => {
-      try {
-        const { books, pagination } = await fetchDriveBooks();
-        const mergedBooks = mergeBooksInPairs(books);
-        setBooks(mergedBooks);
-        setNextPageToken(pagination.nextPageToken);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Error desconocido");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadBooks();
+    if (loading) {
+      loadMore();
+    }
   }, []);
+
+  const loadMore = async () => {
+    setLoading(true);
+    try {
+      const { books: fetched, pagination } = await fetchDriveBooks(
+        nextPageToken || undefined
+      );
+      const merged = mergeBooksInPairs(fetched);
+      setBooks((prev) => [...prev, ...merged]);
+      setNextPageToken(pagination.nextPageToken ?? undefined);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error desconocido");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return <SpinnerScreen />;
@@ -60,6 +65,15 @@ export default function DriveBookStore() {
   }
 
   return (
-    <BookCatalog initialBooks={books} initialNextPageToken={nextPageToken} />
+    <BookCatalog
+      books={books}
+      isLoading={loading}
+      hasMore={!!nextPageToken}
+      loadMore={loadMore}
+      onRetry={() => {
+        setError(null);
+        loadMore();
+      }}
+    />
   );
 }

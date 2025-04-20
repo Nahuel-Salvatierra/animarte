@@ -17,11 +17,8 @@ export async function GET(request: Request) {
     const id = searchParams.get("id") || undefined;
     if (!id) throw new Error("No id provided");
 
-    console.log("calling pi");
-
     const driveService = new GoogleDriveService();
     const response = await driveService.downloadFile(id);
-    console.log("route google", response);
 
     return NextResponse.json(response);
   } catch (error) {

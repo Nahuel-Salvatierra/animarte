@@ -1,50 +1,53 @@
 "use client";
 
 import BookCard from "./BookCard";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useBook } from "@/hooks/useBook";
 import { Book } from "./DriveBookStore";
+import Spinner from "./Spinner";
+
+type Props = {
+  books: Book[];
+  isLoading: boolean;
+  hasMore: boolean;
+  loadMore: () => void;
+  onRetry: () => void;
+};
 
 export default function BookCatalog({
-  initialBooks,
-  initialNextPageToken,
-}: {
-  initialBooks: Book[];
-  initialNextPageToken?: string;
-}) {
-  const { loadMore } = useBook();
-  const [nextPageToken, setNextPageToken] = useState(initialNextPageToken);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  books,
+  isLoading,
+  hasMore,
+  loadMore,
+  onRetry,
+}: Props) {
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
-  const handleLoadMore = async () => {
-    setLoading(true);
-    setError(null);
-    if (nextPageToken) {
-      const token = await loadMore(nextPageToken);
-      setNextPageToken(token);
-    }
-  };
+  useEffect(() => {
+    if (!hasMore || isLoading) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) loadMore();
+      },
+      { rootMargin: "200px" }
+    );
+    if (sentinelRef.current) obs.observe(sentinelRef.current);
+    return () => obs.disconnect();
+  }, [hasMore, isLoading, loadMore]);
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 px-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {Array.from(initialBooks.values()).map((book) => (
+        {Array.from(books.values()).map((book) => (
           <BookCard key={book.id} book={book} onClick={() => {}} />
         ))}
       </div>
-
-      {nextPageToken && (
-        <button
-          onClick={handleLoadMore}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-          disabled={loading}
-        >
-          {loading ? "Cargando..." : "Cargar más"}
-        </button>
+      {isLoading && <Spinner />}
+      {hasMore && !isLoading && (
+        // “Sentinel” invisible para disparar loadMore() al hacer scroll
+        <div ref={sentinelRef} style={{ height: 1 }} />
       )}
-
-      {error && <div className="text-red-500">{error}</div>}
+      {!hasMore && <p className="text-center mt-4">No hay más libros.</p>}
     </div>
   );
 }
