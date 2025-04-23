@@ -1,61 +1,51 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import BookCatalog from "./BookCatalog";
-import SpinnerScreen from "./Spinner";
-import { fetchDriveBooks, FetchedBook } from "@/app/actions/fetchDriveBooks";
-import ErrorMessage from "./ErrorMessage";
+import { useEffect, useState } from 'react';
 
-export type Book = Pick<FetchedBook, "id" | "name" | "mimeType"> & {
+import BookCatalog from './BookCatalog';
+import ErrorMessage from './ErrorMessage';
+import SpinnerScreen from './Spinner';
+
+import { FetchedBook, fetchDriveBooks } from '@/app/actions/actionDriveBooks';
+import { mergeBooksInPairs } from '@/lib/utils';
+
+export type Book = Pick<FetchedBook, 'id' | 'name' | 'mimeType'> & {
   images: string[];
 };
 
-export function mergeBooksInPairs(books: FetchedBook[]): Book[] {
-  const result: Book[] = [];
-
-  for (let i = 0; i < books.length; i += 2) {
-    const current = books[i];
-    const next = books[i + 1];
-
-    result.push({
-      ...current,
-      images: [current.image, next.image],
-    });
-  }
-
-  return result;
-}
-
-export default function DriveBookStore() {
+export default function DriveBookStore({ category }: { category?: string }) {
   const [books, setBooks] = useState<Book[]>([]);
   const [nextPageToken, setNextPageToken] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (loading) {
-      loadMore();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const loadMore = async () => {
     setLoading(true);
+    setBooks([]);
+    setNextPageToken(undefined);
+    setError(null);
+
+    loadMore(true);
+  }, [category]);
+
+  const loadMore = async (isInitialLoad = false) => {
     try {
       const { books: fetched, pagination } = await fetchDriveBooks(
-        nextPageToken || undefined
+        category,
+        isInitialLoad ? undefined : nextPageToken,
       );
       const merged = mergeBooksInPairs(fetched);
-      setBooks((prev) => [...prev, ...merged]);
+
+      setBooks((prev) => (isInitialLoad ? merged : [...prev, ...merged]));
       setNextPageToken(pagination.nextPageToken ?? undefined);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error desconocido");
+      setError(err instanceof Error ? err.message : 'Error desconocido');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
+  if (loading && books.length === 0) {
     return <SpinnerScreen />;
   }
 
@@ -70,10 +60,10 @@ export default function DriveBookStore() {
       books={books}
       isLoading={loading}
       hasMore={!!nextPageToken}
-      loadMore={loadMore}
+      loadMore={() => loadMore(false)}
       onRetry={() => {
         setError(null);
-        loadMore();
+        loadMore(true);
       }}
     />
   );
