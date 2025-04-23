@@ -1,3 +1,5 @@
+import { FetchedBook } from "@/app/actions/actionDriveBooks";
+import { Book } from "@/components/DriveBookStore";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -35,4 +37,20 @@ export function streamToBase64(
     });
     stream.on("error", (err) => reject(err));
   });
+}
+
+export function mergeBooksInPairs(books: FetchedBook[]): Book[] {
+  const result: Book[] = [];
+
+  for (let i = 0; i < books.length; i += 2) {
+    const current = books[i];
+    const next = books[i + 1];
+
+    result.push({
+      ...current,
+      images: [current.image, next?.image || current.image], // Evitar undefined si no hay next
+    });
+  }
+
+  return result;
 }
