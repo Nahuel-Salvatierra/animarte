@@ -1,6 +1,8 @@
-import { axiosClient } from "@/config/axios";
-import { ApiResponse } from "../books/route";
-import { getFromLocalStorage } from "../../lib/getFromLocalStorage";
+import { getFromLocalStorage } from '../../lib/getFromLocalStorage';
+import { CategoryEnum } from '../books/[category]/caterogy.enum';
+import { ApiResponse } from '../google/route';
+
+import { axiosClient } from '@/config/axios';
 
 export type FetchedBook = {
   id: string;
@@ -9,14 +11,20 @@ export type FetchedBook = {
   mimeType: string;
 };
 
-export async function fetchDriveBooks(pageToken?: string): Promise<{
+export async function fetchDriveBooks(
+  category?: string,
+  pageToken?: string,
+): Promise<{
   books: FetchedBook[];
   pagination: {
     nextPageToken?: string;
     hasMore: boolean;
   };
 }> {
-  const url = pageToken ? `/books?pageToken=${pageToken}` : "/books";
+  const baseUrl = category
+    ? `/books/${category}`
+    : `/books/${CategoryEnum.anime}`;
+  const url = pageToken ? `${baseUrl}?pageToken=${pageToken}` : baseUrl;
   const cacheKey = `driveBooksCache:${url}`;
 
   return getFromLocalStorage({
