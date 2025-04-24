@@ -1,21 +1,22 @@
-import { CommandList, CommandGroup, CommandItem } from "cmdk";
-import { Button } from "../ui/button";
-import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
-import { Command } from "../ui/command";
-import { frameworks } from "./constants";
+import { CommandGroup, CommandItem, CommandList } from 'cmdk';
+import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
+
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "../ui/accordion";
-import Link from "next/link";
+} from '../ui/accordion';
+import { Button } from '../ui/button';
+import { Command } from '../ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { frameworks } from './constants';
 
 export default function Dropdown() {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState('');
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -43,14 +44,18 @@ export default function Dropdown() {
                         collapsible
                         className="cursor-pointer"
                       >
-                        <AccordionItem value="item-1" >
+                        <AccordionItem value="item-1">
                           <AccordionTrigger>{framework.value}</AccordionTrigger>
                           {framework.subValues.map((subValue) => (
                             <AccordionContent
                               className="cursor-pointer hover:bg-secondary p-2"
                               key={subValue.value}
                             >
-                              <Link className="w-full flex" onClick={() => setOpen(false)} href={`/cuadernos/${subValue.value}`}>
+                              <Link
+                                className="w-full flex"
+                                onClick={() => setOpen(false)}
+                                href={`/cuadernos/${subValue.value}`}
+                              >
                                 {subValue.label}
                               </Link>
                             </AccordionContent>
@@ -64,11 +69,17 @@ export default function Dropdown() {
                       key={framework.value}
                       value={framework.value}
                       onSelect={(currentValue) => {
-                        setValue(currentValue === value ? "" : currentValue);
+                        setValue(currentValue === value ? '' : currentValue);
                         setOpen(false);
                       }}
                     >
-                      {framework.label}
+                      <Link
+                        className="w-full flex"
+                        onClick={() => setOpen(false)}
+                        href={`/${framework.value}`}
+                      >
+                        {framework.value}
+                      </Link>
                     </CommandItem>
                   )}
                 </div>

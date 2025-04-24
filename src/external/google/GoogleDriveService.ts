@@ -44,6 +44,8 @@ export class GoogleDriveService {
         return process.env.GOOGLE_MUSIC_FOLDER_ID;
       case CategoryEnum.football:
         return process.env.GOOGLE_FOOTBALL_FOLDER_ID;
+      case CategoryEnum.cover:
+        return process.env.GOOGLE_COVER_ID;
       default:
         return this.folderId;
     }

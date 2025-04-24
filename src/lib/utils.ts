@@ -1,7 +1,8 @@
-import { FetchedBook } from "@/app/actions/actionDriveBooks";
-import { Book } from "@/components/DriveBookStore";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+import { FetchedBook } from '@/app/actions/actionDriveBooks';
+import { Book } from '@/components/DriveBookStore';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -18,24 +19,24 @@ export const getImageBase64 = async (url: string) => {
 };
 
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  return Buffer.from(buffer).toString("base64");
+  return Buffer.from(buffer).toString('base64');
 }
 
 export function streamToBase64(
   stream: NodeJS.ReadableStream,
-  contentType = "image/png"
+  contentType = 'image/png',
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const chunks: Buffer[] = [];
 
-    stream.on("data", (chunk) =>
-      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))
+    stream.on('data', (chunk) =>
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)),
     );
-    stream.on("end", () => {
+    stream.on('end', () => {
       const buffer = Buffer.concat(chunks);
-      resolve(`data:${contentType};base64,${buffer.toString("base64")}`);
+      resolve(`data:${contentType};base64,${buffer.toString('base64')}`);
     });
-    stream.on("error", (err) => reject(err));
+    stream.on('error', (err) => reject(err));
   });
 }
 
@@ -53,4 +54,13 @@ export function mergeBooksInPairs(books: FetchedBook[]): Book[] {
   }
 
   return result;
+}
+
+export function fromFetchedBookToBook(books: FetchedBook[]): Book[] {
+  return books.map((fetchedBook) => ({
+    id: fetchedBook.id,
+    name: fetchedBook.name,
+    mimeType: fetchedBook.mimeType,
+    images: [fetchedBook.image],
+  }));
 }
