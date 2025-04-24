@@ -26,6 +26,7 @@ export default function DriveBookStore({ category }: { category?: string }) {
     setError(null);
 
     loadMore(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 
   const loadMore = async (isInitialLoad = false) => {

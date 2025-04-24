@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 
 import BookCatalog from './BookCatalog';
 import { Book } from './DriveBookStore';
+import ErrorMessage from './ErrorMessage';
+import SpinnerScreen from './Spinner';
 
 import { fetchDriveBooks } from '@/app/actions/actionDriveBooks';
 import { fromFetchedBookToBook } from '@/lib/utils';
@@ -22,6 +24,7 @@ export default function DriveCoverStore({ category }: { category?: string }) {
     setError(null);
 
     loadMore(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 
   const loadMore = async (isInitialLoad = false) => {
@@ -41,6 +44,16 @@ export default function DriveCoverStore({ category }: { category?: string }) {
       setLoading(false);
     }
   };
+
+  if (loading && books.length === 0) {
+    return <SpinnerScreen />;
+  }
+
+  if (error) {
+    return (
+      <ErrorMessage message={error} onRetry={() => window.location.reload()} />
+    );
+  }
 
   return (
     <BookCatalog
