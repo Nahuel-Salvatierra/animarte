@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import BookCard from "./BookCard";
-import { useEffect, useRef } from "react";
-import { Book } from "./DriveBookStore";
-import Spinner from "./Spinner";
+import { useEffect, useRef } from 'react';
+
+import BookCard from './BookCard';
+import { Book } from './DriveBookStore';
+import Spinner from './Spinner';
 
 type Props = {
   books: Book[];
@@ -27,7 +28,7 @@ export default function BookCatalog({
       ([entry]) => {
         if (entry.isIntersecting) loadMore();
       },
-      { rootMargin: "200px" }
+      { rootMargin: '200px' },
     );
     if (sentinelRef.current) obs.observe(sentinelRef.current);
     return () => obs.disconnect();
@@ -41,10 +42,7 @@ export default function BookCatalog({
         ))}
       </div>
       {isLoading && <Spinner />}
-      {hasMore && !isLoading && (
-        // “Sentinel” invisible para disparar loadMore() al hacer scroll
-        <div ref={sentinelRef} style={{ height: 1 }} />
-      )}
+      {hasMore && !isLoading && <div ref={sentinelRef} style={{ height: 1 }} />}
       {!hasMore && <p className="text-center mt-4">No hay más libros.</p>}
     </div>
   );
