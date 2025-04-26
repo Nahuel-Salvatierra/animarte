@@ -1,13 +1,15 @@
-"use client";
+'use client';
 
-import { useCartStore } from "@/store/useCartStore";
-import { useMemo } from "react";
-import CatalogPDF from "./components/CatalogPDF";
-import { useRouter } from "next/navigation";
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
+import { toast } from 'react-toastify';
 
-import dynamic from "next/dynamic";
+import CatalogPDF from './components/CatalogPDF';
 
-const DownloadButton = dynamic(() => import("./components/DownloadButton"), {
+import { useCartStore } from '@/store/useCartStore';
+
+const DownloadButton = dynamic(() => import('./components/DownloadButton'), {
   ssr: false,
 });
 
@@ -15,19 +17,19 @@ export default function Page() {
   const cartItemsRaw = useCartStore((state) => state.cartItems);
   const clearCart = useCartStore((state) => state.clearCart);
   const router = useRouter();
-
   const cartItems = useMemo(
     () =>
       Object.entries(cartItemsRaw).map(([key, value]) => ({
         id: key,
         ...value,
       })),
-    [cartItemsRaw]
+    [cartItemsRaw],
   );
 
   const handleOnDownload = () => {
     clearCart();
-    router.push("/");
+    router.push('/');
+    toast.success('Pedido recibido');
   };
 
   return (
