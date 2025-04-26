@@ -1,18 +1,8 @@
-"use client";
-import { fetchDriveBooks, FetchedBook } from "@/app/actions/actionDriveBooks";
-import { useState } from "react";
+'use client';
 
-// const firstState = (initialBooks: FetchedBook[]) => {
-//   {
-//     const map = new Map();
-//     initialBooks.forEach((book) => {
-//       map.set(book.id, {
-//         ...book,
-//       });
-//     });
-//     return map;
-//   }
-// };
+import { useState } from 'react';
+
+import { FetchedBook, fetchDriveBooks } from '@/app/actions/actionDriveBooks';
 
 export type BookState = FetchedBook;
 
