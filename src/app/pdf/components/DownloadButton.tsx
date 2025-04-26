@@ -31,6 +31,7 @@ export default function DownloadButton({
         });
         onDownload?.();
       } catch (error) {
+        console.log('Error generating PDF:', error);
       } finally {
         setLoading(false);
       }

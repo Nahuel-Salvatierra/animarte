@@ -1,7 +1,5 @@
 'use client';
 
-import Image from 'next/image';
-
 import SafeImage from '@/components/SafeImage';
 import { CartItem } from '@/store/useCartStore';
 
