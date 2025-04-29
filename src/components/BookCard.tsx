@@ -43,7 +43,7 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
   };
 
   const removeExtension = (fileName: string) => {
-    return fileName.replace(/\.[^/.]+$/, ''); // Elimina la extensión (ej: .jpg, .png)
+    return fileName.replace(/\.[^/.]+$/, '');
   };
 
   return (

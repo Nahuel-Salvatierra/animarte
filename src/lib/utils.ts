@@ -49,7 +49,7 @@ export function mergeBooksInPairs(books: FetchedBook[]): Book[] {
 
     result.push({
       ...current,
-      images: [current.image, next?.image || current.image], // Evitar undefined si no hay next
+      images: [current.image, next?.image || current.image],
     });
   }
 

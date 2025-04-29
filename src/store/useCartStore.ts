@@ -90,7 +90,7 @@ export const useCartStore = create<CartState>()(
       },
     }),
     {
-      name: 'cart-storage', // clave en localStorage
+      name: 'cart-storage',
     },
   ),
 );
