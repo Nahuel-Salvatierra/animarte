@@ -3,9 +3,18 @@
 import SafeImage from '@/components/SafeImage';
 import { CartItem } from '@/store/useCartStore';
 
-const CatalogPDF = ({ cartItems }: { cartItems: CartItem[] }) => {
+const CatalogPDF = ({
+  cartItems,
+  name,
+}: {
+  cartItems: CartItem[];
+  name: string;
+}) => {
   return (
     <div id="catalog-pdf">
+      <p>
+        <strong>Nombre de la tienda:</strong> {name}
+      </p>
       <div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {cartItems.map((item) => (
