@@ -7,9 +7,9 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
 export default function DownloadButton({
-  onDownload,
+  onSuccess,
 }: {
-  onDownload?: () => void;
+  onSuccess?: () => void;
 }) {
   const [loading, setLoading] = useState(false);
   const fileName = `pedido-${new Date().toDateString()}.pdf`;
@@ -19,17 +19,31 @@ export default function DownloadButton({
     const element = document.querySelector('#catalog-pdf');
 
     if (element) {
+      await html2pdf(element);
       try {
         const pdfBlob = await html2pdf().from(element).outputPdf('blob');
 
         const formData = new FormData();
         formData.append('file', pdfBlob, fileName);
 
-        await fetch('/upload', {
+        const uploadPromise = fetch('/upload', {
           method: 'POST',
           body: formData,
         });
-        onDownload?.();
+
+        const downloadPromise = new Promise<void>((resolve) => {
+          const url = URL.createObjectURL(pdfBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          a.click();
+          URL.revokeObjectURL(url);
+          resolve();
+        });
+
+        await Promise.all([uploadPromise, downloadPromise]);
+
+        onSuccess?.();
       } catch (error) {
         console.log('Error generating PDF:', error);
       } finally {
