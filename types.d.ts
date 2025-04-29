@@ -1,6 +1,6 @@
 declare module 'html2pdf.js' {
   const html2pdf: {
-    (): any;
+    (element?: Element): any;
     set: (options: any) => void;
     from: (element: HTMLElement) => any;
     save: () => void;
