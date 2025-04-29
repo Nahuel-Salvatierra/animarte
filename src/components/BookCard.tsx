@@ -1,19 +1,21 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { Card, CardContent, CardFooter, CardTitle } from "./ui/card";
-import { Button } from "./ui/button";
-import { MinusIcon, PlusIcon } from "lucide-react";
-import { useShallow } from "zustand/shallow";
-import { useCartStore } from "@/store/useCartStore";
-import { Book } from "./DriveBookStore";
+import { MinusIcon, PlusIcon } from 'lucide-react';
+import Image from 'next/image';
+import { useShallow } from 'zustand/shallow';
+
+import { Book } from './DriveBookStore';
+import { Button } from './ui/button';
+import { Card, CardContent, CardFooter, CardTitle } from './ui/card';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "./ui/carousel";
+} from './ui/carousel';
+
+import { useCartStore } from '@/store/useCartStore';
 
 type BookCardProps = {
   book: Book;
@@ -26,7 +28,7 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
   const amountChange = useCartStore((state) => state.amountChange);
 
   const cartItems = useCartStore(
-    useShallow((state) => state.cartItems[book.id] || {})
+    useShallow((state) => state.cartItems[book.id] || {}),
   );
 
   const isInCartAmount = isInCart(book.id);
@@ -40,11 +42,15 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
     amountChange(book.id, newAmount, book);
   };
 
+  const removeExtension = (fileName: string) => {
+    return fileName.replace(/\.[^/.]+$/, ''); // Elimina la extensión (ej: .jpg, .png)
+  };
+
   return (
     <Card className="p-4">
       <CardContent onClick={onClick}>
         <CardTitle className="text-center text-lg font-semibold truncate">
-          {book.name}
+          {removeExtension(book.name)}
         </CardTitle>
         <div className="flex flex-col items-center">
           <Carousel className="w-full max-w-xs" opts={{ loop: true }}>
@@ -62,10 +68,10 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
       </CardContent>
       <div className="flex justify-between w-full">
         <Button
-          variant={cartItems.isSelected ? "secondary" : "default"}
+          variant={cartItems.isSelected ? 'secondary' : 'default'}
           onClick={() => toggleSelect(book.id, book)}
         >
-          {isInCartAmount ? "Eliminar" : "Seleccionar"}
+          {isInCartAmount ? 'Eliminar' : 'Seleccionar'}
         </Button>
         <div className="flex px-2 items-center">
           <div className="mouse-pointer" onClick={() => handleAmountChange(-1)}>
