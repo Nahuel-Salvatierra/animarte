@@ -1,7 +1,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { toast } from 'react-toastify';
 
@@ -19,7 +18,6 @@ export default function ClientWrapper() {
   const name = useName((state) => state.name);
 
   const clearCart = useCartStore((state) => state.clearCart);
-  const router = useRouter();
 
   const cartItems = useMemo(
     () =>
