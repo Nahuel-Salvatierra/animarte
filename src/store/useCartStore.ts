@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
-import { Book } from "@/components/DriveBookStore";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+import { Book } from '@/components/DriveBookStore';
 
 export type CartItem = {
   amount: number;
@@ -28,6 +29,7 @@ export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       cartItems: {},
+
       isInCart: (id) => {
         return get().cartItems[id]?.amount || 0;
       },
@@ -88,7 +90,7 @@ export const useCartStore = create<CartState>()(
       },
     }),
     {
-      name: "cart-storage", // clave en localStorage
-    }
-  )
+      name: 'cart-storage', // clave en localStorage
+    },
+  ),
 );
