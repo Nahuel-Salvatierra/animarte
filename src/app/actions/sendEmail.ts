@@ -54,6 +54,10 @@ export default async function handler(
   try {
     const { file, fileName, recipient } = req.body;
 
+    if (process.env.NODE_ENV === 'development') {
+      return res.status(200).json({ success: true });
+    }
+
     await sendEmail({
       fileBuffer: Buffer.from(file, 'base64'),
       fileName,
