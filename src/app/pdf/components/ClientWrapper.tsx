@@ -30,15 +30,14 @@ export default function ClientWrapper() {
     [cartItemsRaw],
   );
 
-  const handleOnDownload = () => {
+  const handleOnSuccess = () => {
     clearCart();
-    router.push('/');
     toast.success('Pedido recibido');
   };
 
   return (
     <>
-      <DownloadButton onDownload={handleOnDownload} />
+      <DownloadButton onSuccess={handleOnSuccess} />
       <h1 className="text-2xl mb-4">Vista previa</h1>
       {cartItems.length > 0 && (
         <div className="w-full h-full">
