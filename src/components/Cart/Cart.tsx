@@ -19,7 +19,7 @@ export default function Cart({
   setOpen: (open: boolean) => void;
 }) {
   const cartItems = useCartStore((state) => state.cartItems);
-  const onAmountChange = useCartStore((state) => state.amountChange);
+  const handleAmount = useCartStore((state) => state.handleAmount);
   const setName = useName((state) => state.setName);
   const nameRef = useRef<HTMLInputElement>(null);
 
@@ -31,7 +31,7 @@ export default function Cart({
 
     if (newAmount < 0) return;
 
-    onAmountChange(book.reference.id, newAmount, book.reference);
+    handleAmount(book.reference.id, newAmount, book.reference);
   };
 
   const cartItemsIterable = Object.entries(cartItems).map(([key, value]) => ({
@@ -39,21 +39,24 @@ export default function Cart({
     ...value,
   }));
 
+  const validateName = (name: string): boolean => {
+    if (!name) {
+      toast.warning('Por favor, completa el nombre de la tienda');
+      nameRef.current?.focus();
+      return false;
+    }
+    return true;
+  };
+
   const handleOnSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = formData.get('name')?.toString() ?? '';
 
-    if (name === '') {
-      toast.warning('Por favor, completa el nombre de la tienda');
-      if (nameRef.current) {
-        nameRef.current.focus();
-      }
-      return;
-    } else {
-      setOpen(false);
-      router.push('/pdf');
-    }
+    if (!validateName(name)) return;
+
+    setOpen(false);
+    router.push('/pdf');
   };
 
   const handleChange = (e: FormEvent<HTMLInputElement>) => {
