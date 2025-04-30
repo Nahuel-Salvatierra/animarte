@@ -64,3 +64,7 @@ export function fromFetchedBookToBook(books: FetchedBook[]): Book[] {
     images: [fetchedBook.image],
   }));
 }
+
+export const removeExtension = (fileName: string) => {
+  return fileName.replace(/\.[^/.]+$/, '');
+};
