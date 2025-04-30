@@ -20,8 +20,8 @@ type CartState = {
   updateCartItem: (id: string, updater: Partial<CartItem>) => void;
   removeCartItem: (id: string) => void;
   toggleSelect: (id: string, book: Reference) => void;
-  amountChange: (id: string, change: number, reference: Reference) => void;
-  isInCart: (id: string) => number;
+  handleAmount: (id: string, change: number, reference: Reference) => void;
+  quantity: (id: string) => number;
   clearCart: () => void;
 };
 
@@ -30,7 +30,7 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       cartItems: {},
 
-      isInCart: (id) => {
+      quantity: (id) => {
         return get().cartItems[id]?.amount || 0;
       },
 
@@ -69,7 +69,7 @@ export const useCartStore = create<CartState>()(
         }
       },
 
-      amountChange: (id, change, book) => {
+      handleAmount: (id, change, book) => {
         const item = get().cartItems[id];
 
         if (!item) {
