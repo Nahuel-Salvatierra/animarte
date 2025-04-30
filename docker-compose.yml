@@ -9,9 +9,15 @@ services:
     env_file:
       - .env.prod
     ports:
-      - "2020:3000"
+      - '2020:3000'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+    restart: always
     expose:
-      - "3000" # Asumiendo que tu app corre en el puerto 3500 dentro del contenedor
+      - '3000'
 
 networks:
   shared-network:
