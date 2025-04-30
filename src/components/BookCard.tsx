@@ -15,6 +15,7 @@ import {
   CarouselPrevious,
 } from './ui/carousel';
 
+import { removeExtension } from '@/lib/utils';
 import { useCartStore } from '@/store/useCartStore';
 
 type BookCardProps = {
@@ -23,27 +24,21 @@ type BookCardProps = {
 };
 
 const BookCard = ({ book, onClick }: BookCardProps) => {
-  const isInCart = useCartStore((state) => state.isInCart);
+  const quantity = useCartStore((state) => state.quantity);
   const toggleSelect = useCartStore((state) => state.toggleSelect);
-  const amountChange = useCartStore((state) => state.amountChange);
+  const handleAmount = useCartStore((state) => state.handleAmount);
 
   const cartItems = useCartStore(
     useShallow((state) => state.cartItems[book.id] || {}),
   );
 
-  const isInCartAmount = isInCart(book.id);
-
-  const handleAmountChange = (amount: number) => {
+  const updateBookAmount = (amount: number) => {
     const currentAmount = cartItems.amount ?? 0;
     const newAmount = currentAmount + amount;
 
     if (newAmount < 0) return;
 
-    amountChange(book.id, newAmount, book);
-  };
-
-  const removeExtension = (fileName: string) => {
-    return fileName.replace(/\.[^/.]+$/, '');
+    handleAmount(book.id, newAmount, book);
   };
 
   return (
@@ -71,14 +66,14 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
           variant={cartItems.isSelected ? 'secondary' : 'default'}
           onClick={() => toggleSelect(book.id, book)}
         >
-          {isInCartAmount ? 'Eliminar' : 'Seleccionar'}
+          {quantity(book.id) ? 'Eliminar' : 'Seleccionar'}
         </Button>
         <div className="flex px-2 items-center">
-          <div className="mouse-pointer" onClick={() => handleAmountChange(-1)}>
+          <div className="mouse-pointer" onClick={() => updateBookAmount(-1)}>
             <MinusIcon />
           </div>
           <CardFooter className="px-4">{cartItems.amount || 0}</CardFooter>
-          <div className="mouse-pointer" onClick={() => handleAmountChange(+1)}>
+          <div className="mouse-pointer" onClick={() => updateBookAmount(+1)}>
             <PlusIcon />
           </div>
         </div>
