@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { Book } from '@/components/DriveBookStore';
+import { FileDrive } from '@/components/DriveBookStore';
 
 export type CartItem = {
   amount: number;
@@ -12,14 +12,14 @@ export type CartItem = {
   reference: Reference;
 };
 
-type Reference = Book;
+type Reference = FileDrive;
 
 type CartState = {
   cartItems: Record<string, CartItem>;
-  addCartItem: (id: string, book: Reference) => void;
+  addCartItem: (id: string, reference: Reference) => void;
   updateCartItem: (id: string, updater: Partial<CartItem>) => void;
   removeCartItem: (id: string) => void;
-  toggleSelect: (id: string, book: Reference) => void;
+  toggleSelect: (id: string, reference: Reference) => void;
   handleAmount: (id: string, change: number, reference: Reference) => void;
   quantity: (id: string) => number;
   clearCart: () => void;
@@ -34,11 +34,11 @@ export const useCartStore = create<CartState>()(
         return get().cartItems[id]?.amount || 0;
       },
 
-      addCartItem: async (id, book) => {
+      addCartItem: async (id, file) => {
         set((state) => ({
           cartItems: {
             ...state.cartItems,
-            [id]: { isSelected: true, amount: 1, reference: book },
+            [id]: { isSelected: true, amount: 1, reference: file },
           },
         }));
       },
@@ -60,20 +60,20 @@ export const useCartStore = create<CartState>()(
         set({ cartItems: updatedCard });
       },
 
-      toggleSelect: (id, book) => {
+      toggleSelect: (id, file) => {
         const exists = !!get().cartItems[id];
         if (exists) {
           get().removeCartItem(id);
         } else {
-          get().addCartItem(id, book);
+          get().addCartItem(id, file);
         }
       },
 
-      handleAmount: (id, change, book) => {
+      handleAmount: (id, change, file) => {
         const item = get().cartItems[id];
 
         if (!item) {
-          get().addCartItem(id, book);
+          get().addCartItem(id, file);
           return;
         }
 

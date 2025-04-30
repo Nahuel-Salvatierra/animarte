@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 import CatalogPDF from './CatalogPDF';
 
-import { useName } from '@/store/useCart';
+import { useName } from '@/hooks/useName';
 import { useCartStore } from '@/store/useCartStore';
 
 const DownloadButton = dynamic(() => import('./DownloadButton'), {

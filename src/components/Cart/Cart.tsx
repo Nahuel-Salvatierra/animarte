@@ -8,7 +8,7 @@ import { Label } from '../ui/label';
 import { SheetContent, SheetTitle } from '../ui/sheet';
 import CartCard from './CartCard';
 
-import { useName } from '@/store/useCart';
+import { useName } from '@/hooks/useName';
 import { CartItem, useCartStore } from '@/store/useCartStore';
 
 export default function Cart({
@@ -25,13 +25,13 @@ export default function Cart({
 
   const router = useRouter();
 
-  const handleAmountChange = (amount: number, book: CartItem) => {
-    const currentAmount = book.amount ?? 0;
+  const handleAmountChange = (amount: number, cartItem: CartItem) => {
+    const currentAmount = cartItem.amount ?? 0;
     const newAmount = currentAmount + amount;
 
     if (newAmount < 0) return;
 
-    handleAmount(book.reference.id, newAmount, book.reference);
+    handleAmount(cartItem.reference.id, newAmount, cartItem.reference);
   };
 
   const cartItemsIterable = Object.entries(cartItems).map(([key, value]) => ({

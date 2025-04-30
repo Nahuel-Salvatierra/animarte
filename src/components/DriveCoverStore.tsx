@@ -1,51 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-import BookCatalog from './BookCatalog';
-import { Book } from './DriveBookStore';
+import Catalog from './Catalog';
 import ErrorMessage from './ErrorMessage';
 import SpinnerScreen from './Spinner';
 
-import { fetchDriveBooks } from '@/app/actions/actionDriveBooks';
-import { fromFetchedBookToBook } from '@/lib/utils';
+import useGetProducts from '@/hooks/useGetBooks';
+import { fromFetchedFileToFiles } from '@/lib/utils';
 
 export default function DriveCoverStore({ category }: { category?: string }) {
-  const [books, setBooks] = useState<Book[]>([]);
+  const {
+    loading,
+    books: fetched,
+    error,
+    nextPageToken,
+    fetchBooks,
+  } = useGetProducts(category);
 
-  const [nextPageToken, setNextPageToken] = useState<string | undefined>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const cover = fromFetchedFileToFiles(fetched);
 
-  useEffect(() => {
-    setLoading(true);
-    setBooks([]);
-    setNextPageToken(undefined);
-    setError(null);
-
-    loadMore(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category]);
-
-  const loadMore = async (isInitialLoad = false) => {
-    try {
-      const { books: fetched, pagination } = await fetchDriveBooks(
-        category,
-        isInitialLoad ? undefined : nextPageToken,
-      );
-
-      const books = fromFetchedBookToBook(fetched);
-
-      setBooks((prev) => (isInitialLoad ? books : [...prev, ...books]));
-      setNextPageToken(pagination.nextPageToken ?? undefined);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading && books.length === 0) {
+  if (loading && cover.length === 0) {
     return <SpinnerScreen />;
   }
 
@@ -56,11 +29,11 @@ export default function DriveCoverStore({ category }: { category?: string }) {
   }
 
   return (
-    <BookCatalog
-      books={books}
+    <Catalog
+      files={cover}
       isLoading={loading}
       hasMore={!!nextPageToken}
-      loadMore={loadMore}
+      loadMore={fetchBooks}
       onRetry={() => window.location.reload()}
     />
   );

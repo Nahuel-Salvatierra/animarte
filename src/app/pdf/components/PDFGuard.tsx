@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
 import { toast } from 'react-toastify';
 
-import { useName } from '@/store/useCart';
+import { useName } from '@/hooks/useName';
 import { useCartStore } from '@/store/useCartStore';
 
 export default function PDFGuard({ children }: { children: React.ReactNode }) {

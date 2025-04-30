@@ -4,7 +4,7 @@ import { ApiResponse } from '../google/route';
 
 import { axiosClient } from '@/config/axios';
 
-export type FetchedBook = {
+export type FetchedFile = {
   id: string;
   name: string;
   image: string;
@@ -12,17 +12,17 @@ export type FetchedBook = {
 };
 
 export async function fetchDriveBooks(
-  category?: string,
+  productKey?: string,
   pageToken?: string,
 ): Promise<{
-  books: FetchedBook[];
+  books: FetchedFile[];
   pagination: {
     nextPageToken?: string;
     hasMore: boolean;
   };
 }> {
-  const baseUrl = category
-    ? `/books/${category}`
+  const baseUrl = productKey
+    ? `/books/${productKey}`
     : `/books/${CategoryEnum.anime}`;
   const url = pageToken ? `${baseUrl}?pageToken=${pageToken}` : baseUrl;
   const cacheKey = `driveBooksCache:${url}`;

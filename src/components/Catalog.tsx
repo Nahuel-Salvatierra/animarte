@@ -2,20 +2,20 @@
 
 import { useEffect, useRef } from 'react';
 
-import BookCard from './BookCard';
-import { Book } from './DriveBookStore';
+import CatalogCard from './CatalogCard';
+import { FileDrive } from './DriveBookStore';
 import Spinner from './Spinner';
 
 type Props = {
-  books: Book[];
+  files: FileDrive[];
   isLoading: boolean;
   hasMore: boolean;
   loadMore: () => void;
   onRetry: () => void;
 };
 
-export default function BookCatalog({
-  books,
+export default function Catalog({
+  files,
   isLoading,
   hasMore,
   loadMore,
@@ -37,8 +37,8 @@ export default function BookCatalog({
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 px-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {Array.from(books.values()).map((book) => (
-          <BookCard key={book.id} book={book} onClick={() => {}} />
+        {Array.from(files.values()).map((file) => (
+          <CatalogCard key={file.id} file={file} onClick={() => {}} />
         ))}
       </div>
       {isLoading && <Spinner />}

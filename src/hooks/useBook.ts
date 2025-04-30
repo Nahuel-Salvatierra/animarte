@@ -2,16 +2,16 @@
 
 import { useState } from 'react';
 
-import { FetchedBook, fetchDriveBooks } from '@/app/actions/actionDriveBooks';
+import { FetchedFile, fetchDriveBooks } from '@/app/actions/actionDriveBooks';
 
-export type BookState = FetchedBook;
+export type BookState = FetchedFile;
 
 export type BooksMap = Map<string, BookState>;
 
 export function useBook() {
   const [booksMap, setBooksMap] = useState<BooksMap>();
 
-  const addNewBooks = (newBooks: FetchedBook[]) => {
+  const addNewBooks = (newBooks: FetchedFile[]) => {
     setBooksMap((prev) => {
       const newMap = new Map(prev);
       newBooks.forEach((book) => {

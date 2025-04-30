@@ -1,8 +1,8 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-import { FetchedBook } from '@/app/actions/actionDriveBooks';
-import { Book } from '@/components/DriveBookStore';
+import { FetchedFile } from '@/app/actions/actionDriveBooks';
+import { FileDrive } from '@/components/DriveBookStore';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -40,8 +40,8 @@ export function streamToBase64(
   });
 }
 
-export function mergeBooksInPairs(books: FetchedBook[]): Book[] {
-  const result: Book[] = [];
+export function mergeFileFetchedInPairs(books: FetchedFile[]): FileDrive[] {
+  const result: FileDrive[] = [];
 
   for (let i = 0; i < books.length; i += 2) {
     const current = books[i];
@@ -56,12 +56,12 @@ export function mergeBooksInPairs(books: FetchedBook[]): Book[] {
   return result;
 }
 
-export function fromFetchedBookToBook(books: FetchedBook[]): Book[] {
-  return books.map((fetchedBook) => ({
-    id: fetchedBook.id,
-    name: fetchedBook.name,
-    mimeType: fetchedBook.mimeType,
-    images: [fetchedBook.image],
+export function fromFetchedFileToFiles(files: FetchedFile[]): FileDrive[] {
+  return files.map((fetchedFile) => ({
+    id: fetchedFile.id,
+    name: fetchedFile.name,
+    mimeType: fetchedFile.mimeType,
+    images: [fetchedFile.image],
   }));
 }
 

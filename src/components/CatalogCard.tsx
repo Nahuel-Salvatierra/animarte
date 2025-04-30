@@ -4,7 +4,7 @@ import { MinusIcon, PlusIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useShallow } from 'zustand/shallow';
 
-import { Book } from './DriveBookStore';
+import { FileDrive } from './DriveBookStore';
 import { Button } from './ui/button';
 import { Card, CardContent, CardFooter, CardTitle } from './ui/card';
 import {
@@ -18,18 +18,18 @@ import {
 import { removeExtension } from '@/lib/utils';
 import { useCartStore } from '@/store/useCartStore';
 
-type BookCardProps = {
-  book: Book;
+type CatalogCardProps = {
+  file: FileDrive;
   onClick: () => void;
 };
 
-const BookCard = ({ book, onClick }: BookCardProps) => {
+const CatalogCard = ({ file, onClick }: CatalogCardProps) => {
   const quantity = useCartStore((state) => state.quantity);
   const toggleSelect = useCartStore((state) => state.toggleSelect);
   const handleAmount = useCartStore((state) => state.handleAmount);
 
   const cartItems = useCartStore(
-    useShallow((state) => state.cartItems[book.id] || {}),
+    useShallow((state) => state.cartItems[file.id] || {}),
   );
 
   const updateBookAmount = (amount: number) => {
@@ -38,21 +38,21 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
 
     if (newAmount < 0) return;
 
-    handleAmount(book.id, newAmount, book);
+    handleAmount(file.id, newAmount, file);
   };
 
   return (
     <Card className="p-4">
       <CardContent onClick={onClick}>
         <CardTitle className="text-center text-lg font-semibold truncate">
-          {removeExtension(book.name)}
+          {removeExtension(file.name)}
         </CardTitle>
         <div className="flex flex-col items-center">
           <Carousel className="w-full max-w-xs" opts={{ loop: true }}>
             <CarouselContent>
-              {book.images.map((image, index) => (
+              {file.images.map((image, index) => (
                 <CarouselItem key={index} className="justify-center flex">
-                  <Image src={image} alt={book.name} width={200} height={200} />
+                  <Image src={image} alt={file.name} width={200} height={200} />
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -64,9 +64,9 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
       <div className="flex justify-between w-full">
         <Button
           variant={cartItems.isSelected ? 'secondary' : 'default'}
-          onClick={() => toggleSelect(book.id, book)}
+          onClick={() => toggleSelect(file.id, file)}
         >
-          {quantity(book.id) ? 'Eliminar' : 'Seleccionar'}
+          {quantity(file.id) ? 'Eliminar' : 'Seleccionar'}
         </Button>
         <div className="flex px-2 items-center">
           <div className="mouse-pointer" onClick={() => updateBookAmount(-1)}>
@@ -82,4 +82,4 @@ const BookCard = ({ book, onClick }: BookCardProps) => {
   );
 };
 
-export default BookCard;
+export default CatalogCard;
