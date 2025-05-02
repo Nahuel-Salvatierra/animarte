@@ -6,7 +6,7 @@ import SpinnerScreen from './Spinner';
 
 import { FetchedFile } from '@/app/actions/actionDriveBooks';
 import useGetProducts from '@/hooks/useGetBooks';
-import { fromFetchedFileToFiles } from '@/lib/utils';
+import { mergeFileFetchedInPairs } from '@/lib/utils';
 
 export type FileDrive = Pick<FetchedFile, 'id' | 'name' | 'mimeType'> & {
   images: string[];
@@ -21,7 +21,7 @@ export default function DriveBookStore({ category }: { category?: string }) {
     fetchBooks,
   } = useGetProducts(category);
 
-  const books = fromFetchedFileToFiles(fetched);
+  const books = fetched && mergeFileFetchedInPairs(fetched);
 
   if (loading && books.length === 0) {
     return <SpinnerScreen />;
@@ -34,12 +34,16 @@ export default function DriveBookStore({ category }: { category?: string }) {
   }
 
   return (
-    <BookCatalog
-      files={books}
-      isLoading={loading}
-      hasMore={!!nextPageToken}
-      loadMore={fetchBooks}
-      onRetry={() => window.location.reload()}
-    />
+    <>
+      {books && (
+        <BookCatalog
+          files={books}
+          isLoading={loading}
+          hasMore={!!nextPageToken}
+          loadMore={fetchBooks}
+          onRetry={() => window.location.reload()}
+        />
+      )}
+    </>
   );
 }
