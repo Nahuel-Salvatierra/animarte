@@ -22,6 +22,11 @@ jobs:
           npm install
           npm run build
 
+      - name: Run tests
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:e2e
+
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.7.0
         with:
