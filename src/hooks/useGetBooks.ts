@@ -7,7 +7,7 @@ export default function useGetProducts(productKey?: string) {
   const [loading, setLoading] = useState(false);
   const [nextPageToken, setNextPageToken] = useState<string | undefined>();
   const [error, setError] = useState<string | null>(null);
-  const isInitialLoad = books.length === 0;
+  const isInitialLoad = books?.length === 0;
 
   const fetchBooks = async () => {
     setLoading(true);
