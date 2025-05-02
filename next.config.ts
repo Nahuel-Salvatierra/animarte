@@ -4,9 +4,9 @@ const nextConfig = {
     styledComponents: true,
   },
   images: {
-    domains: ["drive.google.com", "lh3.googleusercontent.com"],
+    domains: ['drive.google.com', 'lh3.googleusercontent.com', 'test.fake'],
   },
-  output: "standalone",
+  output: 'standalone',
 };
 
 module.exports = nextConfig;
