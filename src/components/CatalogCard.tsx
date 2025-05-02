@@ -42,7 +42,7 @@ const CatalogCard = ({ file, onClick }: CatalogCardProps) => {
   };
 
   return (
-    <Card className="p-4">
+    <Card className="p-4" data-testid="catalog-card">
       <CardContent onClick={onClick}>
         <CardTitle className="text-center text-lg font-semibold truncate">
           {removeExtension(file.name)}
