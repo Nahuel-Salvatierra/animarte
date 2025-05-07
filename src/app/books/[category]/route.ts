@@ -1,19 +1,22 @@
-import { GoogleDriveService } from "@/external/google/GoogleDriveService";
-import { AxiosError } from "axios";
-import { NextResponse } from "next/server";
+import { AxiosError } from 'axios';
+import { NextResponse } from 'next/server';
+
+import { GoogleDriveService } from '@/external/google/GoogleDriveService';
 
 export async function GET(request: Request) {
   try {
     const { searchParams, pathname } = new URL(request.url);
-    const pageToken = searchParams.get("pageToken") || undefined;
-    const param = pathname.split("/").pop();
-    const pageSize = Number(searchParams.get("pageSize")) || 100;
+    const pageToken = searchParams.get('pageToken') || undefined;
+    const query = searchParams.get('query') || '';
+    const param = pathname.split('/').pop();
+    const pageSize = Number(searchParams.get('pageSize')) || 100;
 
     const driveService = new GoogleDriveService();
     const { files, nextPageToken } = await driveService.listFiles(
       pageToken,
       pageSize,
-      param
+      param,
+      query,
     );
 
     return NextResponse.json({
@@ -24,7 +27,7 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.log("Error fetching files:", error);
-    throw new AxiosError("Error fetching files from Google");
+    console.log('Error fetching files:', error);
+    throw new AxiosError('Error fetching files from Google');
   }
 }
