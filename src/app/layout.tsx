@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ToastContainer } from 'react-toastify';
 
-// Importar los íconos
-
 import './globals.css';
 import InstagramButton from './pdf/components/InstagramButton';
 import WhatsAppButton from './pdf/components/WhatsappButton';
