@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useState } from 'react';
 
 import Cart from '../Cart/Cart';
+import SearchInput from '../SearchInput';
 import { Badge } from '../ui/badge';
 import { Sheet, SheetTrigger } from '../ui/sheet';
 import Dropdown from './Dropdown';
@@ -43,6 +44,7 @@ export function NavBar() {
             <Cart open={open} setOpen={() => setOpen((prev) => !prev)} />
           </Sheet>
         </div>
+        <SearchInput />
         <Image
           alt="animarte logo"
           src={'/animarte_logo.png'}
