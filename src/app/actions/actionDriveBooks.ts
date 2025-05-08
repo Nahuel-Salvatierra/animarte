@@ -26,21 +26,23 @@ export async function fetchDriveBooks(
     ? `/books/${productKey}`
     : `/books/${CategoryEnum.anime}`;
 
-  const url = new URL(
-    pageToken ? `${baseUrl}?pageToken=${pageToken}` : baseUrl,
-    process.env.NEXT_PUBLIC_BASE_URL,
-  );
-
-  if (searchQuery) {
-    url.searchParams.set('query', searchQuery);
+  let urlString = baseUrl;
+  
+  if (pageToken) {
+    urlString += `?pageToken=${encodeURIComponent(pageToken)}`;
   }
 
-  const cacheKey = `driveBooksCache:${url.toString()}`;
+  if (searchQuery) {
+    const separator = urlString.includes('?') ? '&' : '?';
+    urlString += `${separator}query=${encodeURIComponent(searchQuery)}`;
+  }
+
+  const cacheKey = `driveBooksCache:${urlString}`;
 
   return getFromLocalStorage({
     key: cacheKey,
     loadIfMissing: async () => {
-      const response = await axiosClient.get<ApiResponse>(url.toString());
+      const response = await axiosClient.get<ApiResponse>(urlString);
 
       if (response.status !== 200) {
         throw new Error(`HTTP error! status: ${response.status}`);
