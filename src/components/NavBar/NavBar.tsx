@@ -3,9 +3,11 @@
 import Image from 'next/image';
 import * as React from 'react';
 import { useState } from 'react';
+import { Suspense } from 'react';
 
 import Cart from '../Cart/Cart';
 import SearchInput from '../SearchInput';
+import SpinnerScreen from '../Spinner';
 import { Badge } from '../ui/badge';
 import { Sheet, SheetTrigger } from '../ui/sheet';
 import Dropdown from './Dropdown';
@@ -45,7 +47,9 @@ export function NavBar() {
           </Sheet>
         </div>
         <div className="flex gap-5 px-2 items-center sm:px-0">
-          <SearchInput />
+          <Suspense fallback={<SpinnerScreen />}>
+            <SearchInput />
+          </Suspense>
           <Image
             alt="animarte logo"
             src={'/animarte_logo.png'}

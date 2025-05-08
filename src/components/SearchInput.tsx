@@ -1,6 +1,6 @@
 'use client';
 
-import { LucidePenSquare, SearchIcon } from 'lucide-react';
+import { SearchIcon } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
