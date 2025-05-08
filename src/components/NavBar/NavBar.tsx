@@ -44,14 +44,16 @@ export function NavBar() {
             <Cart open={open} setOpen={() => setOpen((prev) => !prev)} />
           </Sheet>
         </div>
-        <SearchInput />
-        <Image
-          alt="animarte logo"
-          src={'/animarte_logo.png'}
-          className="hidden sm:block justify-self-end"
-          width={140}
-          height={50}
-        />
+        <div className="flex gap-5 px-2 items-center sm:px-0">
+          <SearchInput />
+          <Image
+            alt="animarte logo"
+            src={'/animarte_logo.png'}
+            className="hidden sm:block justify-self-end"
+            width={140}
+            height={50}
+          />
+        </div>
       </div>
     </div>
   );
