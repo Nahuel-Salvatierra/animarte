@@ -1,44 +1,48 @@
-import { CategoryEnum } from "@/app/books/[category]/caterogy.enum";
+import { CategoryEnum } from '@/app/books/[category]/caterogy.enum';
 
 export const categories = [
   {
     value: CategoryEnum.anime,
-    label: "Anime",
+    label: 'Anime',
   },
   {
     value: CategoryEnum.cartoon,
-    label: "Cartoon y Kawaii",
+    label: 'Cartoon y Kawaii',
   },
   {
     value: CategoryEnum.superhero,
-    label: "Superheroes",
+    label: 'Superheroes',
   },
   {
     value: CategoryEnum.disney,
-    label: "Disney",
+    label: 'Disney',
   },
   {
     value: CategoryEnum.football,
-    label: "Futbol",
+    label: 'Futbol',
   },
   {
     value: CategoryEnum.music,
-    label: "Musica y Youtube",
+    label: 'Musica y Youtube',
   },
   {
     value: CategoryEnum.series,
-    label: "Series y Peliculas",
+    label: 'Series y Peliculas',
+  },
+  {
+    value: CategoryEnum.games,
+    label: 'Juegos',
   },
 ];
 
 export const frameworks = [
   {
-    value: "cuadernos",
-    label: "Cuadernos",
+    value: 'cuadernos',
+    label: 'Cuadernos',
     subValues: categories,
   },
   {
-    value: "caratulas",
-    label: "Caratulas",
+    value: 'caratulas',
+    label: 'Caratulas',
   },
 ];

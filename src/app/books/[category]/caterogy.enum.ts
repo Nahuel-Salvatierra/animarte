@@ -7,4 +7,5 @@ export enum CategoryEnum {
   series = 'series',
   music = 'music',
   cover = 'cover',
+  games = 'games',
 }
