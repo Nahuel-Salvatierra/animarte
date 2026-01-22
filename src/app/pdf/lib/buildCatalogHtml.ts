@@ -10,10 +10,6 @@ function escapeHtml(text: string): string {
   return div.innerHTML;
 }
 
-function escapeAttr(value: string): string {
-  return escapeHtml(value).replace(/"/g, '&quot;');
-}
-
 function escapeDataUrl(dataUrl: string): string {
   return dataUrl.replace(/"/g, '&quot;');
 }
