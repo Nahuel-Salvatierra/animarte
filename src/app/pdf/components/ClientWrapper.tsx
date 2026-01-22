@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 
 import CatalogPDF from './CatalogPDF';
 
+import { useImageCache } from '../hooks/useImageCache';
 import { useName } from '@/hooks/useName';
 import { useCartStore } from '@/store/useCartStore';
 
@@ -16,7 +17,6 @@ const DownloadButton = dynamic(() => import('./DownloadButton'), {
 export default function ClientWrapper() {
   const cartItemsRaw = useCartStore((state) => state.cartItems);
   const name = useName((state) => state.name);
-
   const clearCart = useCartStore((state) => state.clearCart);
 
   const cartItems = useMemo(
@@ -28,6 +28,8 @@ export default function ClientWrapper() {
     [cartItemsRaw],
   );
 
+  const { getImageDataUrl, cacheReady } = useImageCache(cartItems);
+
   const handleOnSuccess = () => {
     clearCart();
     toast.success('Pedido recibido');
@@ -35,7 +37,13 @@ export default function ClientWrapper() {
 
   return (
     <>
-      <DownloadButton onSuccess={handleOnSuccess} />
+      <DownloadButton
+        name={name}
+        cartItems={cartItems}
+        getImageDataUrl={getImageDataUrl}
+        cacheReady={cacheReady}
+        onSuccess={handleOnSuccess}
+      />
       <h1 className="text-2xl mb-4">Vista previa</h1>
       {cartItems.length > 0 && (
         <div className="w-full h-full">

@@ -20,6 +20,7 @@ export default function Cart({
 }) {
   const cartItems = useCartStore((state) => state.cartItems);
   const handleAmount = useCartStore((state) => state.handleAmount);
+  const name = useName((state) => state.name);
   const setName = useName((state) => state.setName);
   const nameRef = useRef<HTMLInputElement>(null);
 
@@ -78,7 +79,12 @@ export default function Cart({
             <Label className="text-sm text-muted-foreground">
               Nombre/Tienda
             </Label>
-            <Input ref={nameRef} name="name" onChange={handleChange} />
+            <Input
+              ref={nameRef}
+              name="name"
+              value={name}
+              onChange={handleChange}
+            />
             {cartItemsIterable.map((item) => (
               <CartCard
                 key={item.id}

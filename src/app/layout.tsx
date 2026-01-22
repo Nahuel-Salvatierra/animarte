@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { ToastContainer } from 'react-toastify';
 
 import './globals.css';
+import FloatingHomeButton from './pdf/components/FloatingHomeButton';
 import InstagramButton from './pdf/components/InstagramButton';
 import WhatsAppButton from './pdf/components/WhatsappButton';
 
@@ -45,6 +46,7 @@ export default function RootLayout({
           <ToastContainer theme="dark" />
           {children}
         </div>
+        <FloatingHomeButton />
         <div className="fixed bottom-4 right-4 flex flex-col gap-4">
           <WhatsAppButton />
           <InstagramButton />
