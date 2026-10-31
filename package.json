@@ -15,7 +15,8 @@
     "test:e2e:debug": "playwright test --debug",
     "start:test": "cross-env NODE_ENV=test next dev -p 3001",
     "test:unit": "vitest run",
-    "catalog:import": "npm --prefix tools/catalog-importer run import --"
+    "catalog:import": "npm --prefix tools/catalog-importer run import --",
+    "catalog:sync-public": "rm -rf public/products && cp public-catalog/catalog.json public/catalog.json && cp public-catalog/categories.json public/categories.json && cp -r public-catalog/products public/products"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
