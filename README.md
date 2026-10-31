@@ -37,14 +37,6 @@ npm install
 npm run import -- --category games --skip-ai
 ```
 
-## Tests
-
-```bash
-npm run test:unit
-npm run test:e2e
-cd tools/catalog-importer && npm test
-```
-
 ## Docs
 
 - `docs/s3-static-deploy.md` — S3/CloudFront deploy

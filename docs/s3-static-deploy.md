@@ -148,7 +148,7 @@ aws s3 sync ./public-catalog s3://YOUR_BUCKET/ \
 
 Every push to `main` (and manual **Run workflow**) runs `.github/workflows/deploy.yml`:
 
-1. `npm ci` → unit tests → `npm run build` → Playwright e2e
+1. `npm ci` → `npm run build`
 2. Assume an IAM role via **OIDC** (no long-lived AWS keys in GitHub)
 3. Sync `out/` to S3 (**never** deletes/overwrites `products/`, `catalog.json`, or `categories.json`)
 4. Invalidate CloudFront `/*` when `CLOUDFRONT_DISTRIBUTION_ID` is set
