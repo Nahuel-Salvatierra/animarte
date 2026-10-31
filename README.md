@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Animarte
 
-## Getting Started
+Digital product catalog for browsing stationery items, building a temporary selection, and downloading a PDF order sheet.
 
-First, run the development server:
+There is no checkout, payments, shipping, or email sending. WhatsApp is only a chat link to the business phone number.
+
+## Stack
+
+- **Static** Next.js export (`out/`) — no SSR, no Node server in production
+- Hosted on **S3 + CloudFront**
+- Offline importer in `tools/catalog-importer/`
+
+## Local development
 
 ```bash
+cp .env.example .env
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+With an empty CDN URL, the app loads `/catalog.json` from `public/`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Static build (what you upload to S3)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build          # writes ./out
+npm start              # optional local preview of ./out
+```
 
-## Learn More
+Pushes to **`main`** deploy the static site via GitHub Actions → S3 + CloudFront (catalog `products/` / JSON are left alone). See **[`docs/s3-static-deploy.md`](docs/s3-static-deploy.md)** for bucket layout, IAM/OIDC secrets, and manual upload steps.
 
-To learn more about Next.js, take a look at the following resources:
+## Catalog importer
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+cd tools/catalog-importer
+npm install
+npm run import -- --category games --skip-ai
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tests
 
-## Deploy on Vercel
+```bash
+npm run test:unit
+npm run test:e2e
+cd tools/catalog-importer && npm test
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Docs
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `docs/s3-static-deploy.md` — S3/CloudFront deploy
+- `docs/architecture.md`
+- `docs/catalog-publish.md`

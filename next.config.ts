@@ -1,19 +1,37 @@
 /** @type {import('next').NextConfig} */
+const catalogCdn = process.env.NEXT_PUBLIC_CATALOG_CDN_URL;
+let catalogHostname: string | undefined;
+
+try {
+  if (catalogCdn) {
+    catalogHostname = new URL(catalogCdn).hostname;
+  }
+} catch {
+  catalogHostname = undefined;
+}
+
+const remotePatterns = [
+  {
+    protocol: 'https',
+    hostname: '**.cloudfront.net',
+  },
+  ...(catalogHostname
+    ? [
+        {
+          protocol: 'https',
+          hostname: catalogHostname,
+        },
+      ]
+    : []),
+];
+
 const nextConfig = {
-  compiler: {
-    styledComponents: true,
-  },
+  output: 'export',
+  trailingSlash: true,
   images: {
-    domains: [
-      'drive.google.com',
-      'lh3.googleusercontent.com',
-      'test.fake',
-      'https://drive.google.com',
-      'https://lh3.googleusercontent.com',
-      'https://www.google.com',
-    ],
+    unoptimized: true,
+    remotePatterns,
   },
-  output: 'standalone',
 };
 
 module.exports = nextConfig;

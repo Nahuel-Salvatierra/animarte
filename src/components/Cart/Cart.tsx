@@ -26,13 +26,22 @@ export default function Cart({
 
   const router = useRouter();
 
-  const handleAmountChange = (amount: number, cartItem: CartItem) => {
+  const handleAmountChange = (delta: number, cartItem: CartItem) => {
     const currentAmount = cartItem.amount ?? 0;
-    const newAmount = currentAmount + amount;
-
+    const newAmount = currentAmount + delta;
     if (newAmount < 0) return;
 
-    handleAmount(cartItem.reference.id, newAmount, cartItem.reference);
+    handleAmount(
+      {
+        id: cartItem.reference.id,
+        title: cartItem.reference.title,
+        category: '',
+        kind: 'notebook',
+        images: [],
+        coverPath: cartItem.reference.coverPath,
+      },
+      newAmount,
+    );
   };
 
   const cartItemsIterable = Object.entries(cartItems).map(([key, value]) => ({
@@ -40,8 +49,8 @@ export default function Cart({
     ...value,
   }));
 
-  const validateName = (name: string): boolean => {
-    if (!name) {
+  const validateName = (value: string): boolean => {
+    if (!value) {
       toast.warning('Por favor, completa el nombre de la tienda');
       nameRef.current?.focus();
       return false;
@@ -52,17 +61,16 @@ export default function Cart({
   const handleOnSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const name = formData.get('name')?.toString() ?? '';
+    const storeName = formData.get('name')?.toString() ?? '';
 
-    if (!validateName(name)) return;
+    if (!validateName(storeName)) return;
 
     setOpen(false);
     router.push('/pdf');
   };
 
   const handleChange = (e: FormEvent<HTMLInputElement>) => {
-    const { value } = e.currentTarget;
-    setName(value);
+    setName(e.currentTarget.value);
   };
 
   return (
@@ -70,12 +78,11 @@ export default function Cart({
       {open && (
         <SheetContent>
           <form
-            onSubmit={(e) => handleOnSubmit(e)}
+            onSubmit={handleOnSubmit}
             className="overflow-y-auto pt-3 pl-4 pr-4 gap-2 flex flex-row flex-wrap"
           >
             <SheetTitle>Solicitud de pedido</SheetTitle>
-            Por favor, completa los campos a continuación para que podamos
-            procesar tu pedido.
+            Por favor, completa los campos a continuación para generar tu PDF.
             <Label className="text-sm text-muted-foreground">
               Nombre/Tienda
             </Label>
@@ -93,7 +100,7 @@ export default function Cart({
               />
             ))}
             <Button className="w-full mb-2" type="submit">
-              Enviar
+              Generar PDF
             </Button>
           </form>
         </SheetContent>

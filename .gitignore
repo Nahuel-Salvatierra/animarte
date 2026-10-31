@@ -16,6 +16,7 @@
 # next.js
 /.next/
 /out/
+# static export output is rebuilt locally before S3 upload
 
 # production
 /build
@@ -31,7 +32,17 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*
+.env
+.env.local
+.env.*.local
+
+# catalog importer working files / generated catalog (keep fixtures if committed intentionally)
+tools/catalog-importer/.work/
+tools/catalog-importer/node_modules/
+public-catalog/products/
+public-catalog/import-report.json
+public-catalog/review-queue.json
+public/products/
 
 # vercel
 .vercel

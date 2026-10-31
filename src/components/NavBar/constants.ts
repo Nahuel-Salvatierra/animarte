@@ -1,39 +1,9 @@
-import { CategoryEnum } from '@/app/books/[category]/caterogy.enum';
+import { NOTEBOOK_CATEGORIES } from '@/catalog/categories';
 
-export const categories = [
-  {
-    value: CategoryEnum.anime,
-    label: 'Anime',
-  },
-  {
-    value: CategoryEnum.cartoon,
-    label: 'Cartoon y Kawaii',
-  },
-  {
-    value: CategoryEnum.superhero,
-    label: 'Superheroes',
-  },
-  {
-    value: CategoryEnum.disney,
-    label: 'Disney',
-  },
-  {
-    value: CategoryEnum.football,
-    label: 'Futbol',
-  },
-  {
-    value: CategoryEnum.music,
-    label: 'Musica y Youtube',
-  },
-  {
-    value: CategoryEnum.series,
-    label: 'Series y Peliculas',
-  },
-  {
-    value: CategoryEnum.games,
-    label: 'Juegos',
-  },
-];
+export const categories = NOTEBOOK_CATEGORIES.map((category) => ({
+  value: category.id,
+  label: category.label,
+}));
 
 export const frameworks = [
   {

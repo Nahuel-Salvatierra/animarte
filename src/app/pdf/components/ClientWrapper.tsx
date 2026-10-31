@@ -32,7 +32,7 @@ export default function ClientWrapper() {
 
   const handleOnSuccess = () => {
     clearCart();
-    toast.success('Pedido recibido');
+    toast.success('PDF descargado');
   };
 
   return (

@@ -1,4 +1,13 @@
-import ClientWrapper from './components/ClientWrapper';
+'use client';
+
+import dynamic from 'next/dynamic';
+
+import SpinnerScreen from '@/components/Spinner';
+
+const ClientWrapper = dynamic(() => import('./components/ClientWrapper'), {
+  ssr: false,
+  loading: () => <SpinnerScreen />,
+});
 
 export default function Page() {
   return (

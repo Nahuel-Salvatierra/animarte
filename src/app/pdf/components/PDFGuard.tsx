@@ -1,31 +1,34 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
 import { useName } from '@/hooks/useName';
 import { useCartStore } from '@/store/useCartStore';
 
 export default function PDFGuard({ children }: { children: React.ReactNode }) {
-  const name = useName((state) => state.getName());
+  const name = useName((state) => state.name);
   const cartItems = useCartStore((state) => state.cartItems);
-
   const cartItemsLength = Object.keys(cartItems).length;
-
-  const hasShownToast = useRef(false);
+  const hasRedirected = useRef(false);
   const router = useRouter();
 
-  if (name === '' && !hasShownToast.current) {
-    toast.error('Por favor, completa el nombre de la tienda');
-    hasShownToast.current = true;
-    router.replace('/');
-  }
+  useEffect(() => {
+    if (hasRedirected.current) return;
 
-  if (cartItemsLength === 0 && !hasShownToast.current) {
-    hasShownToast.current = true;
-    router.replace('/');
-  }
+    if (!name) {
+      hasRedirected.current = true;
+      toast.error('Por favor, completa el nombre de la tienda');
+      router.replace('/');
+      return;
+    }
+
+    if (cartItemsLength === 0) {
+      hasRedirected.current = true;
+      router.replace('/');
+    }
+  }, [name, cartItemsLength, router]);
 
   return <>{children}</>;
 }

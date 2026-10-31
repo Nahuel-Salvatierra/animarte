@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import DriveBookStore from '@/components/DriveBookStore';
+import CatalogStore from '@/components/CatalogStore';
 import SpinnerScreen from '@/components/Spinner';
 
 export default function Home() {
@@ -9,7 +9,7 @@ export default function Home() {
       <h1 className="text-3xl px-2 font-bold">Cuadernos</h1>
       <br />
       <Suspense fallback={<SpinnerScreen />}>
-        <DriveBookStore />
+        <CatalogStore category="anime" />
       </Suspense>
     </main>
   );

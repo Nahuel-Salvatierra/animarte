@@ -1,47 +1,87 @@
-name: Deploy with Docker Compose
+name: Deploy static site
 
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION || 'sa-east-1' }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
+          cache: npm
 
-      - name: Install dependencies and build
-        run: |
-          npm install
-          npm run build
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Run tests
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Build static export
+        run: npm run build
+        env:
+          NEXT_PUBLIC_CATALOG_CDN_URL: ${{ vars.NEXT_PUBLIC_CATALOG_CDN_URL }}
+
+      - name: Install Playwright and run e2e
         run: |
           npx playwright install --with-deps chromium
-          npm run test:e2e
+          npm run test:e2e:ci
 
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.7.0
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          ssh-private-key: ${{ secrets.VPS_PRIVATE_KEY }}
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
 
-      - name: Add host to known_hosts
+      - name: Sync static site to S3
+        env:
+          S3_BUCKET: ${{ vars.S3_BUCKET }}
         run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H -p ${{ secrets.VPS_PORT }} ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+          if [ -z "${S3_BUCKET}" ]; then
+            echo "Repository variable S3_BUCKET is required"
+            exit 1
+          fi
 
-      - name: Deploy to VPS
+          # Hashed Next assets — long cache
+          aws s3 sync out/_next/static "s3://${S3_BUCKET}/_next/static" \
+            --delete \
+            --cache-control "public,max-age=31536000,immutable"
+
+          # App files — never touch catalog media or catalog JSON published by the importer
+          aws s3 sync out/ "s3://${S3_BUCKET}/" \
+            --delete \
+            --exclude "_next/static/*" \
+            --exclude "products/*" \
+            --exclude "products" \
+            --exclude "catalog.json" \
+            --exclude "categories.json" \
+            --exclude "import-report.json" \
+            --exclude "review-queue.json" \
+            --cache-control "public,max-age=60,s-maxage=300,must-revalidate"
+
+      - name: Invalidate CloudFront
+        env:
+          DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
         run: |
-          ssh -p ${{ secrets.VPS_PORT }} ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "
-            cd ${{ secrets.VPS_PROJECT_ROUTE }} &&
-            git pull origin main &&
-            docker compose down &&
-            docker compose up --build -d
-          "
+          if [ -z "${DISTRIBUTION_ID}" ]; then
+            echo "CLOUDFRONT_DISTRIBUTION_ID not set; skip invalidation"
+            exit 0
+          fi
+          aws cloudfront create-invalidation \
+            --distribution-id "${DISTRIBUTION_ID}" \
+            --paths "/*"

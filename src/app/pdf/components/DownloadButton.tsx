@@ -1,13 +1,14 @@
 'use client';
 
-import { SendIcon } from 'lucide-react';
+import { pdf } from '@react-pdf/renderer';
+import { DownloadIcon } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import type { CartItem } from '@/store/useCartStore';
 
-import type { PdfCatalogItem } from '../lib/buildCatalogHtml';
-import { buildCatalogHtml } from '../lib/buildCatalogHtml';
+import { OrderPdfDocument } from '../lib/OrderPdfDocument';
 
 type CartItemWithId = CartItem & { id: string };
 
@@ -26,67 +27,55 @@ export default function DownloadButton({
 }) {
   const [loading, setLoading] = useState(false);
 
-  const downloadAndSend = async () => {
-    const catalogItems: PdfCatalogItem[] = cartItems.map((item) => ({
-      reference: { name: item.reference.name },
+  const downloadPdf = async () => {
+    const items = cartItems.map((item) => ({
+      title: item.reference.title,
       amount: item.amount,
       imageDataUrl: getImageDataUrl(item.id),
     }));
 
-    const html = buildCatalogHtml(name, catalogItems);
-    const fileName = `pedido-${name}-${new Date().toISOString().split('T')[0]}.html`;
+    const blob = await pdf(
+      <OrderPdfDocument storeName={name} items={items} />,
+    ).toBlob();
 
-    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const fileName = `pedido-${name}-${new Date().toISOString().split('T')[0]}.pdf`;
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = fileName;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
     URL.revokeObjectURL(url);
-
-    const res = await fetch('/upload', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ html }),
-    });
-
-    if (!res.ok) {
-      const data = (await res.json().catch(() => ({}))) as {
-        error?: string;
-      };
-      throw new Error(data?.error ?? 'Error al enviar');
-    }
   };
 
   const handleClick = async () => {
     if (cartItems.length === 0 || !cacheReady) return;
     setLoading(true);
     try {
-      await downloadAndSend();
+      await downloadPdf();
       onSuccess?.();
     } catch (error) {
-      console.error('Error al descargar o enviar:', error);
+      console.error('Error al generar PDF:', error);
+      toast.error('No se pudo generar el PDF');
     } finally {
       setLoading(false);
     }
   };
 
-  const disabled =
-    loading || cartItems.length === 0 || !cacheReady;
+  const disabled = loading || cartItems.length === 0 || !cacheReady;
 
   return (
     <Button
       disabled={disabled}
-      onClick={handleClick}
+      onClick={() => void handleClick()}
       variant="default"
       className="md:max-w-[30%]"
     >
       {loading ? (
         <>
           <div className="animate-spin h-5 w-5 border-2 border-t-transparent rounded-full" />
-          <div>Procesando...</div>
+          <div>Generando PDF...</div>
         </>
       ) : !cacheReady && cartItems.length > 0 ? (
         <div className="flex truncate items-center gap-2">
@@ -94,7 +83,7 @@ export default function DownloadButton({
         </div>
       ) : (
         <div className="flex truncate items-center gap-2">
-          Descargar y Enviar <SendIcon />
+          Descargar PDF <DownloadIcon />
         </div>
       )}
     </Button>

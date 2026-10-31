@@ -1,11 +1,18 @@
 import { Suspense } from 'react';
 
-import DriveBookStore from '@/components/DriveBookStore';
+import { NOTEBOOK_CATEGORIES } from '@/catalog/categories';
+import CatalogStore from '@/components/CatalogStore';
 import SpinnerScreen from '@/components/Spinner';
 
 type Params = {
   params: Promise<{ category: string }>;
 };
+
+export function generateStaticParams() {
+  return NOTEBOOK_CATEGORIES.map((category) => ({
+    category: category.id,
+  }));
+}
 
 export default async function CategoryPage({ params }: Params) {
   const { category } = await params;
@@ -15,7 +22,7 @@ export default async function CategoryPage({ params }: Params) {
       <h1 className="text-3xl px-2 font-bold">Cuadernos</h1>
       <br />
       <Suspense fallback={<SpinnerScreen />}>
-        <DriveBookStore category={category} />
+        <CatalogStore category={category} />
       </Suspense>
     </main>
   );

@@ -3,42 +3,55 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { FileDrive } from '@/components/DriveBookStore';
+import type { CatalogItemView } from '@/catalog/types';
+
+export type CartReference = {
+  id: string;
+  title: string;
+  coverPath: string;
+};
 
 export type CartItem = {
   amount: number;
   isSelected: boolean;
-  imageBlob?: string;
-  reference: Reference;
+  reference: CartReference;
 };
-
-type Reference = FileDrive;
 
 type CartState = {
   cartItems: Record<string, CartItem>;
-  addCartItem: (id: string, reference: Reference) => void;
+  addCartItem: (item: CatalogItemView) => void;
   updateCartItem: (id: string, updater: Partial<CartItem>) => void;
   removeCartItem: (id: string) => void;
-  toggleSelect: (id: string, reference: Reference) => void;
-  handleAmount: (id: string, change: number, reference: Reference) => void;
+  toggleSelect: (item: CatalogItemView) => void;
+  handleAmount: (item: CatalogItemView, amount: number) => void;
   quantity: (id: string) => number;
   clearCart: () => void;
 };
+
+function toReference(item: CatalogItemView): CartReference {
+  return {
+    id: item.id,
+    title: item.title,
+    coverPath: item.coverPath,
+  };
+}
 
 export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       cartItems: {},
 
-      quantity: (id) => {
-        return get().cartItems[id]?.amount || 0;
-      },
+      quantity: (id) => get().cartItems[id]?.amount || 0,
 
-      addCartItem: async (id, file) => {
+      addCartItem: (item) => {
         set((state) => ({
           cartItems: {
             ...state.cartItems,
-            [id]: { isSelected: true, amount: 1, reference: file },
+            [item.id]: {
+              isSelected: true,
+              amount: 1,
+              reference: toReference(item),
+            },
           },
         }));
       },
@@ -55,34 +68,33 @@ export const useCartStore = create<CartState>()(
       },
 
       removeCartItem: (id) => {
-        const updatedCard = { ...get().cartItems };
-        delete updatedCard[id];
-        set({ cartItems: updatedCard });
+        const updated = { ...get().cartItems };
+        delete updated[id];
+        set({ cartItems: updated });
       },
 
-      toggleSelect: (id, file) => {
-        const exists = !!get().cartItems[id];
+      toggleSelect: (item) => {
+        const exists = !!get().cartItems[item.id];
         if (exists) {
-          get().removeCartItem(id);
+          get().removeCartItem(item.id);
         } else {
-          get().addCartItem(id, file);
+          get().addCartItem(item);
         }
       },
 
-      handleAmount: (id, change, file) => {
-        const item = get().cartItems[id];
-
-        if (!item) {
-          get().addCartItem(id, file);
+      handleAmount: (item, amount) => {
+        const current = get().cartItems[item.id];
+        if (!current) {
+          if (amount > 0) get().addCartItem(item);
           return;
         }
 
-        const newAmount = Math.max(change, 0);
+        const newAmount = Math.max(amount, 0);
         if (newAmount === 0) {
-          get().removeCartItem(id);
+          get().removeCartItem(item.id);
           return;
         }
-        get().updateCartItem(id, { amount: newAmount });
+        get().updateCartItem(item.id, { amount: newAmount });
       },
 
       clearCart: () => {
@@ -91,6 +103,8 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: 'cart-storage',
+      version: 2,
+      migrate: () => ({ cartItems: {} }),
     },
   ),
 );

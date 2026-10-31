@@ -1,5 +1,7 @@
-import Image from "next/image";
-import { useState } from "react";
+'use client';
+
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export default function SafeImage({
   src,
@@ -8,12 +10,16 @@ export default function SafeImage({
 }: { src: string; alt: string } & React.ComponentProps<typeof Image>) {
   const [imgSrc, setImgSrc] = useState(src);
 
+  useEffect(() => {
+    setImgSrc(src);
+  }, [src]);
+
   return (
     <Image
       {...props}
       src={imgSrc}
       alt={alt}
-      onError={() => setImgSrc("/error_load_image.png")}
+      onError={() => setImgSrc('/error_load_image.png')}
     />
   );
 }

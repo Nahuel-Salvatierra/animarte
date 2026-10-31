@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import DriveCoverStore from '@/components/DriveCoverStore';
+import CatalogStore from '@/components/CatalogStore';
 import SpinnerScreen from '@/components/Spinner';
 
 export default function CoverPage() {
@@ -9,7 +9,7 @@ export default function CoverPage() {
       <h1 className="text-3xl px-2 font-bold">Caratulas</h1>
       <br />
       <Suspense fallback={<SpinnerScreen />}>
-        <DriveCoverStore category="cover" />
+        <CatalogStore category="cover" />
       </Suspense>
     </main>
   );

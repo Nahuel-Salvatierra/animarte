@@ -3,11 +3,12 @@
 import { useEffect, useRef } from 'react';
 
 import CatalogCard from './CatalogCard';
-import { FileDrive } from './DriveBookStore';
+
+import type { CatalogItemView } from '@/catalog/types';
 import Spinner from './Spinner';
 
 type Props = {
-  files: FileDrive[];
+  files: CatalogItemView[];
   isLoading: boolean;
   hasMore: boolean;
   loadMore: () => void;
@@ -37,13 +38,15 @@ export default function Catalog({
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 px-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {Array.from(files.values()).map((file) => (
-          <CatalogCard key={file.id} file={file} onClick={() => {}} />
+        {files.map((file) => (
+          <CatalogCard key={file.id} item={file} />
         ))}
       </div>
       {isLoading && <Spinner />}
       {hasMore && !isLoading && <div ref={sentinelRef} style={{ height: 1 }} />}
-      {!hasMore && <p className="text-center mt-4">No hay más libros.</p>}
+      {!hasMore && files.length > 0 && (
+        <p className="text-center mt-4">No hay más productos.</p>
+      )}
     </div>
   );
 }

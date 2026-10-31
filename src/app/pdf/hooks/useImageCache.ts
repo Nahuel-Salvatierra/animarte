@@ -2,22 +2,28 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-type CartItemWithId = {
-  id: string;
-  reference: { name: string; images: string[] };
-  amount: number;
-};
+import { resolveCatalogAssetUrl } from '@/catalog/cdn';
+import type { CartItem } from '@/store/useCartStore';
+
+type CartItemWithId = CartItem & { id: string };
 
 const DEFAULT_FALLBACK =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 
-async function blobToDataUrl(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(r.result as string);
-    r.onerror = () => reject(r.error);
-    r.readAsDataURL(blob);
-  });
+async function blobToPngDataUrl(blob: Blob): Promise<string> {
+  // @react-pdf/renderer only decodes PNG/JPEG; catalog assets are webp.
+  const bitmap = await createImageBitmap(blob);
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('canvas unavailable');
+    ctx.drawImage(bitmap, 0, 0);
+    return canvas.toDataURL('image/png');
+  } finally {
+    bitmap.close();
+  }
 }
 
 async function fetchImageAsDataUrl(url: string): Promise<string> {
@@ -25,8 +31,8 @@ async function fetchImageAsDataUrl(url: string): Promise<string> {
   if (!res.ok) throw new Error('fetch failed');
   const blob = await res.blob();
   if (blob.size === 0) throw new Error('empty blob');
-  const dataUrl = await blobToDataUrl(blob);
-  if (!dataUrl || !dataUrl.startsWith('data:')) {
+  const dataUrl = await blobToPngDataUrl(blob);
+  if (!dataUrl.startsWith('data:image/png')) {
     throw new Error('invalid data URL');
   }
   return dataUrl;
@@ -34,13 +40,11 @@ async function fetchImageAsDataUrl(url: string): Promise<string> {
 
 export function useImageCache(cartItems: CartItemWithId[]) {
   const [imageCache, setImageCache] = useState<Map<string, string>>(new Map());
-  const [fallbackDataUrl, setFallbackDataUrl] = useState<string>(DEFAULT_FALLBACK);
+  const [fallbackDataUrl, setFallbackDataUrl] = useState(DEFAULT_FALLBACK);
   const [cacheReady, setCacheReady] = useState(false);
 
   const getImageDataUrl = useCallback(
-    (itemId: string): string => {
-      return imageCache.get(itemId) ?? fallbackDataUrl;
-    },
+    (itemId: string): string => imageCache.get(itemId) ?? fallbackDataUrl,
     [imageCache, fallbackDataUrl],
   );
 
@@ -58,9 +62,7 @@ export function useImageCache(cartItems: CartItemWithId[]) {
     }
 
     setCacheReady(false);
-    const proxyBase = `${window.location.origin}/api/proxy-image`;
-    const fallbackUrl = `${window.location.origin}/error_load_image.png`;
-
+    const fallbackUrl = '/error_load_image.png';
     let cancelled = false;
 
     const run = async () => {
@@ -73,15 +75,13 @@ export function useImageCache(cartItems: CartItemWithId[]) {
       const next = new Map<string, string>();
       await Promise.all(
         cartItems.map(async (item) => {
-          const url = item.reference.images[0];
+          const url = resolveCatalogAssetUrl(item.reference.coverPath);
           if (!url) return;
           try {
-            const dataUrl = await fetchImageAsDataUrl(
-              `${proxyBase}?url=${encodeURIComponent(url)}`,
-            );
+            const dataUrl = await fetchImageAsDataUrl(url);
             if (!cancelled) next.set(item.id, dataUrl);
           } catch {
-            /* use fallback via getImageDataUrl */
+            /* fallback via getImageDataUrl */
           }
         }),
       );
@@ -92,7 +92,7 @@ export function useImageCache(cartItems: CartItemWithId[]) {
       }
     };
 
-    run();
+    void run();
     return () => {
       cancelled = true;
     };
