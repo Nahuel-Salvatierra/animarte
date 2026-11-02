@@ -19,7 +19,10 @@ export function NavBar() {
   const cartItems = useCartStore((state) => state.cartItems);
   const [open, setOpen] = useState(true);
 
-  const cartCount = Object.keys(cartItems).length;
+  const cartCount = Object.values(cartItems).reduce(
+    (total, item) => total + item.amount,
+    0,
+  );
 
   return (
     <div className="w-full justify-center py-2 items-center flex flex-row bg-primary">
