@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import * as React from 'react';
 import { useState } from 'react';
 import { Suspense } from 'react';
@@ -27,8 +28,14 @@ export function NavBar() {
   return (
     <div className="w-full justify-center py-2 items-center flex flex-row bg-primary">
       <div className="container w-full gap-2 flex justify-between">
-        <div className="flex justify-start">
+        <div className="flex justify-start items-center">
           <Dropdown />
+          <Link
+            href="/preguntas-frecuentes/"
+            className="text-secondary inline-flex items-center rounded-md px-3 text-sm tracking-wide uppercase hover:text-primary hover:bg-secondary"
+          >
+            FAQ
+          </Link>
 
           <Sheet>
             <SheetTrigger

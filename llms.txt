@@ -1,0 +1,31 @@
+# animarte — llms.txt
+
+The public answer-engine file is generated at `/llms.txt` from `src/lib/aeo.ts`. This copy stays in the repo for coding agents and is not deployed.
+
+> Next.js static export (`output: 'export'`, `trailingSlash: true`) of Animarte: custom notebooks/agendas catalog (cuadernos personalizados). UI copy in Spanish. Cart + in-browser PDF order sheet; no checkout, payments, or shipping in the app. Contact: Instagram `@tienda.animarte92`, WhatsApp `+54 11 3468-4381`. Replace `{origin}` with `NEXT_PUBLIC_SITE_URL` or `https://animarte.website` when crawling.
+
+## Product intent (answer anchors)
+
+- **What users get:** Browse notebook categories and covers; add items to a temporary cart; download a PDF of the selection.
+- **Not in scope:** Online payment, checkout, order management, email, or automated shipping.
+
+## High-value routes (browse order)
+
+| Path | Role |
+|------|------|
+| `/` | Hub: notebooks catalog (default anime category). |
+| `/cuadernos/{category}/` | Notebook category pages (`anime`, `cartoon`, `superheroes`, `disney`, `football`, `music`, `series`, `games`). |
+| `/caratulas/` | Cover catalog (`cover` kind). |
+| `/pdf/` | Client-side PDF of the current cart. |
+| `/preguntas-frecuentes/` | FAQ + FAQPage JSON-LD for answer engines. |
+| `/llms.txt` | Machine-readable site summary (from `src/lib/aeo.ts`). |
+
+## Implementation map (agents)
+
+- **AEO:** `src/lib/aeo.ts`, `src/app/llms.txt/route.ts`, `src/app/preguntas-frecuentes/page.tsx`.
+- **Catalog:** `src/catalog/` + optional `NEXT_PUBLIC_CATALOG_CDN_URL`.
+- **Nav:** `src/components/NavBar/`.
+
+## Conventions for code contributors
+
+- Domain identifiers and business logic in English; user-visible strings stay Spanish unless the product is English-first.
