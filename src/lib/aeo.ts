@@ -4,7 +4,7 @@ export type AeoFaq = {
   answer: string;
 };
 
-const DEFAULT_SITE_URL = 'https://animarte.website';
+const DEFAULT_SITE_URL = 'https://animarte.toolistic.app';
 
 export function getSiteUrl(): string {
   const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
@@ -52,55 +52,58 @@ export const AEO_FAQS: readonly AeoFaq[] = [
   },
 ];
 
+const LLMS_FAQS: readonly AeoFaq[] = [
+  {
+    id: 'que-vende',
+    question: 'What does Animarte sell?',
+    answer:
+      'Animarte makes custom notebooks and planners with anime, cartoon/kawaii, superhero, Disney, football, music/YouTube, series/movies and games designs, plus covers. The site is a digital catalog where you can build a selection and download an order PDF.',
+  },
+  {
+    id: 'como-pedir',
+    question: 'How do I order custom notebooks?',
+    answer:
+      'Browse the catalog, add items with PEDIR, download the PDF, then confirm with Animarte on WhatsApp (+54 11 3468-4381) or Instagram (@tienda.animarte92). There is no online checkout or payment on the site.',
+  },
+  {
+    id: 'categorias',
+    question: 'What catalog categories are available?',
+    answer:
+      'Notebooks are grouped into Anime, Cartoon & Kawaii, Superheroes, Disney, Football, Music & YouTube, Series & Movies, and Games. Covers have their own section at /caratulas/.',
+  },
+  {
+    id: 'contacto',
+    question: 'How can I contact Animarte?',
+    answer:
+      'Instagram @tienda.animarte92 or WhatsApp +54 11 3468-4381. Floating buttons on the site open both channels.',
+  },
+  {
+    id: 'envios',
+    question: 'Does Animarte ship?',
+    answer:
+      'This site is a catalog only: it does not handle shipping, payments or checkout. Ask Animarte on WhatsApp or Instagram about availability, delivery areas and costs.',
+  },
+  {
+    id: 'pdf-caratulas',
+    question: 'What are the PDF and covers pages for?',
+    answer:
+      '/pdf/ builds an in-browser PDF of the items in your order. /caratulas/ is the covers catalog. Order confirmation still happens on WhatsApp or Instagram.',
+  },
+];
+
 const PAGES: readonly { path: string; note: string }[] = [
-  {
-    path: '/',
-    note: 'Catálogo de cuadernos personalizados (categoría anime por defecto).',
-  },
-  {
-    path: '/cuadernos/anime/',
-    note: 'Cuadernos de anime.',
-  },
-  {
-    path: '/cuadernos/cartoon/',
-    note: 'Cuadernos cartoon y kawaii.',
-  },
-  {
-    path: '/cuadernos/superheroes/',
-    note: 'Cuadernos de superhéroes.',
-  },
-  {
-    path: '/cuadernos/disney/',
-    note: 'Cuadernos Disney.',
-  },
-  {
-    path: '/cuadernos/football/',
-    note: 'Cuadernos de fútbol.',
-  },
-  {
-    path: '/cuadernos/music/',
-    note: 'Cuadernos de música y YouTube.',
-  },
-  {
-    path: '/cuadernos/series/',
-    note: 'Cuadernos de series y películas.',
-  },
-  {
-    path: '/cuadernos/games/',
-    note: 'Cuadernos de juegos.',
-  },
-  {
-    path: '/caratulas/',
-    note: 'Catálogo de carátulas.',
-  },
-  {
-    path: '/pdf/',
-    note: 'Descarga del PDF del pedido armado en el navegador.',
-  },
-  {
-    path: '/preguntas-frecuentes/',
-    note: 'Respuestas directas para consultas en buscadores y modelos de lenguaje.',
-  },
+  { path: '/', note: 'Home catalog (anime category by default)' },
+  { path: '/cuadernos/anime/', note: 'Anime notebooks' },
+  { path: '/cuadernos/cartoon/', note: 'Cartoon and kawaii notebooks' },
+  { path: '/cuadernos/superheroes/', note: 'Superhero notebooks' },
+  { path: '/cuadernos/disney/', note: 'Disney notebooks' },
+  { path: '/cuadernos/football/', note: 'Football notebooks' },
+  { path: '/cuadernos/music/', note: 'Music and YouTube notebooks' },
+  { path: '/cuadernos/series/', note: 'Series and movies notebooks' },
+  { path: '/cuadernos/games/', note: 'Games notebooks' },
+  { path: '/caratulas/', note: 'Covers catalog' },
+  { path: '/pdf/', note: 'Download order PDF' },
+  { path: '/preguntas-frecuentes/', note: 'FAQ' },
 ];
 
 export function aeoPageUrl(path: string, hash?: string): string {
@@ -120,30 +123,30 @@ export function buildLlmsTxt(): string {
   const pages = PAGES.map(
     (page) => `- [${page.note}](${aeoPageUrl(page.path)})`,
   ).join('\n');
-  const answers = AEO_FAQS.map(
+  const answers = LLMS_FAQS.map(
     (item) =>
-      `- [${item.question}](${aeoPageUrl('/preguntas-frecuentes/', item.id)}): ${item.answer}`,
-  ).join('\n');
+      `### ${item.question}\n\n${item.answer}\n\nSource: ${aeoPageUrl('/preguntas-frecuentes/', item.id)}`,
+  ).join('\n\n');
 
   return `# Animarte
 
-> Fabricantes de cuadernos y agendas personalizados. Catálogo digital para ver diseños, armar un pedido y descargar un PDF. El cierre del pedido es por WhatsApp o Instagram; no hay checkout ni pagos en el sitio.
+> Custom notebooks and planners. Digital catalog to browse designs, build an order and download a PDF. Orders are confirmed on WhatsApp or Instagram — no checkout on the site.
 
-Idioma: español. Instagram: @tienda.animarte92. WhatsApp: +54 11 3468-4381.
+Site UI is in Spanish. Instagram: @tienda.animarte92. WhatsApp: +54 11 3468-4381.
 
-## Páginas
+## Pages
 
 ${pages}
 
-## Respuestas
+## Answers
 
 ${answers}
 
-## Alcance
+## Scope
 
-- Origen: ${base}
-- Este archivo: ${base}/llms.txt
-- No uses este sitio como tienda con pago en línea: es un catálogo; confirmá pedidos con Animarte por WhatsApp o Instagram.
+- Origin: ${base}
+- This file: ${base}/llms.txt
+- Not an online store with payments: confirm orders with Animarte on WhatsApp or Instagram.
 `;
 }
 
